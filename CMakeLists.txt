@@ -10,10 +10,10 @@ cmake_minimum_required (VERSION 2.6)
 ENABLE_LANGUAGE(CXX)
 #set(CMAKE_BUILD_TYPE Release)
 
-project (Death)
-set(PROJECT_SRC ${Death_SOURCE_DIR}/src)
-set(DIR_UNIT_TEST ${Death_SOURCE_DIR}/test)
-set(DIR_3RDPARTY ${Death_SOURCE_DIR}/3rdparty)
+project (DeathKnell)
+set(PROJECT_SRC ${DeathKnell_SOURCE_DIR}/src)
+set(DIR_UNIT_TEST ${DeathKnell_SOURCE_DIR}/test)
+set(DIR_3RDPARTY ${DeathKnell_SOURCE_DIR}/3rdparty)
 
 
 MESSAGE(" PROJECT_SRC = : ${PROJECT_SRC}")
@@ -61,8 +61,8 @@ ELSEIF(MSVC)
       # "set_target_properties(unit_test PROPERTIES COMPILE_DEFINITIONS "GTEST_USE_OWN_TR1_TUPLE=0")
    MESSAGE("")
    MESSAGE("Windows: Please run the command [cmake -DCMAKE_BUILD_TYPE=Release -G \"Visual Studio 11\" ..]")
-   MESSAGE("if cmake finishes OK, do 'msbuild TestOfDeath.sln /p:Configuration=Release'")
-   MESSAGE("then run 'Release\\TestOfDeath.exe'")
+   MESSAGE("if cmake finishes OK, do 'msbuild TestOfDeathKnell.sln /p:Configuration=Release'")
+   MESSAGE("then run 'Release\\TestOfDeathKnell.exe'")
    MESSAGE("")
 ENDIF()
 
@@ -70,12 +70,12 @@ ENDIF()
 # GENERIC STEPS
 file(GLOB SRC_FILES ${PROJECT_SRC}/*.h ${PROJECT_SRC}/*.hpp ${PROJECT_SRC}/*.cpp ${PROJECT_SRC}/*.ipp)
  
-# Create the Death library
+# Create the DeathKnell library
 include_directories(${PROJECT_SRC})
-add_library(Death ${SRC_FILES})
-set_target_properties(Death PROPERTIES LINKER_LANGUAGE CXX)
-add_library(Death_shared SHARED ${SRC_FILES})
-set_target_properties(Death_shared PROPERTIES LINKER_LANGUAGE CXX)
+add_library(DeathKnell ${SRC_FILES})
+set_target_properties(DeathKnell PROPERTIES LINKER_LANGUAGE CXX)
+add_library(DeathKnell_shared SHARED ${SRC_FILES})
+set_target_properties(DeathKnell_shared PROPERTIES LINKER_LANGUAGE CXX)
 
 # create the unit tests
 # =========================
@@ -98,7 +98,7 @@ include_directories(test)
   file(GLOB TEST_SRC_FILES "test/*.cpp")
 
   add_executable(UnitTestRunner 3rdparty/test_main.cpp ${TEST_SRC_FILES} )
-  target_link_libraries(UnitTestRunner gtest_170_lib boost_thread boost_system lib_g2log stdc++ tcmalloc FileIO ${PLATFORM_LINK_LIBRIES} Death)
+  target_link_libraries(UnitTestRunner gtest_170_lib boost_thread boost_system lib_g2log stdc++ tcmalloc FileIO ${PLATFORM_LINK_LIBRIES} DeathKnell)
   set_target_properties(${test} PROPERTIES COMPILE_DEFINITIONS "GTEST_HAS_TR1_TUPLE=0")
   set_target_properties(${test} PROPERTIES COMPILE_DEFINITIONS "GTEST_HAS_RTTI=0")
 IF( NOT(MSVC))
