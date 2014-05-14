@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-PACKAGE=Death
+PACKAGE=DeathKnell
 VERSION=1.0
 
 PWD=`pwd`
