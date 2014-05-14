@@ -1,4 +1,4 @@
-Name:          Death
+Name:          DeathKnell
 Version:       1.0
 Release:       1%{?dist}
 Summary:       An implemnetation of a on death callback structure built from g2log
