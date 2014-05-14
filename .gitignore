@@ -1,0 +1,14 @@
+/3rdparty/gtest-1.7.0/
+/CMakeCache.txt
+/nbproject
+/rpms/
+/CMakeFiles/
+/CTestTestfile.cmake
+/Makefile
+/UnitTestRunner
+/cmake_install.cmake
+/libDeath.so
+/libDeath_shared.so
+/libgtest_170_lib.so
+/Death/
+/Death-1.0.tar.gz
