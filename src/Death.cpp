@@ -1,7 +1,7 @@
 
-#include <g2logworker.hpp>
+#include <g2log.hpp>
 #include <unistd.h>
-
+#include <iostream>
 #include "Death.h"
 
 /**
@@ -46,26 +46,29 @@ void Death::EnableDefaultFatalCall() {
 
 void Death::Received(g2::internal::FatalMessage death) {
 
-   static std::thread::id activeDeathThreadID; // uninitialized on purpose
+   thread_local bool recursiveDeathDetect = false;
 
    // lambda for quick exit
-   auto clearCallbacksThenFatalExit = [](g2::internal::FatalMessage death) {
+   auto clearCallbacksThenFatalExit = [&](g2::internal::FatalMessage death) {
       if (Death::Instance().mEnableDefaultFatal) {
          ClearExits();
          g2::internal::fatalCallToLogger(death);
       }
+      recursiveDeathDetect = false; // reset for test purposes
    };
 
    // Recursive fatal was discovered
-   if (Death::Instance().mReceived  && std::this_thread::get_id() == activeDeathThreadID) {
+   if (Death::Instance().mReceived  && recursiveDeathDetect) {
+      std::cerr << "Recursive crash detected. Aborting death-hook calls" << std::endl;
       clearCallbacksThenFatalExit(death);
+      return;
    }
 
 
    std::lock_guard<std::mutex> glock(Death::Instance().mListLock);
-   activeDeathThreadID = std::this_thread::get_id();
    Death::Instance().mReceived = true;
    Death::Instance().mMessage = death.message_;
+   recursiveDeathDetect = true;
    for (const auto& deathFunction : Death::Instance().mShutdownFunctions) {
       // semi-dangerous in case one function would trigger another FATAL
       // as long as it is in the same thread then we will capture that above
