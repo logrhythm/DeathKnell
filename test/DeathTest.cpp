@@ -63,6 +63,8 @@ TEST(DeathTest, VerifySingleton) {
 
 TEST(DeathTest, VerifyReceiveCheck) {
    RaiiDeathCleanup cleanup;
+   Death::ClearExits();
+
    Death::Instance().SetupExitHandler();
 
    EXPECT_FALSE(Death::Instance().WasKilled());
@@ -130,4 +132,24 @@ TEST(DeathTest, ThreadSafeTest) {
    EXPECT_EQ(1,DeathTest::stringsEchoed.size());
    EXPECT_EQ("race", DeathTest::stringsEchoed[0]);
 }
+
+
+// 
+TEST(DeathTest, DISABLED_VerifyReceiveSignalAndExitForReal) {
+   std::cout << "Running this test will kill the test process ... keep it disabled if possible" << std::endl;
+   std::cout << "If the test succeeds then another printout will come that says 'Death message: SUCCESS'" << std::endl;
+   RaiiDeathCleanup cleanup;
+   auto deathTestCallback = [](const Death::DeathCallbackArg& arg) {
+      std::cout << "Death message: " << arg << std::endl;
+   };
+
+   Death::EnableDefaultFatalCall();
+   std::string msg = {"SUCCESS"};
+   Death::RegisterDeathEvent(deathTestCallback, msg);
+
+   EXPECT_FALSE(Death::Instance().WasKilled());
+   raise(SIGSEGV);
+   EXPECT_TRUE(Death::Instance().WasKilled());
+}
+
 
