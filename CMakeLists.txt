@@ -74,12 +74,11 @@ file(GLOB SRC_FILES ${PROJECT_SRC}/*.h ${PROJECT_SRC}/*.hpp ${PROJECT_SRC}/*.cpp
 include_directories(${PROJECT_SRC})
 add_library(DeathKnell ${SRC_FILES})
 set_target_properties(DeathKnell PROPERTIES LINKER_LANGUAGE CXX)
-add_library(DeathKnell_shared SHARED ${SRC_FILES})
-set_target_properties(DeathKnell_shared PROPERTIES LINKER_LANGUAGE CXX)
+
+
 
 # create the unit tests
 # =========================
-
 set(GTEST_DIR ${DIR_3RDPARTY}/gtest-1.7.0)
 set(GTEST_INCLUDE_DIRECTORIES ${GTEST_DIR}/include ${GTEST_DIR} ${GTEST_DIR}/src)
 MESSAGE( "Attempt to build gtest. gtest directory: " ${GTEST_DIR})

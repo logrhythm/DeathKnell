@@ -2,8 +2,9 @@
 #include <future>
 
 #include "DeathTest.h"
-#include "Death.h"
-#include "FileIO.h"
+#include <Death.h>
+#include <FileIO.h>
+#include <cassert>
 
 extern std::shared_ptr<g2LogWorker> g2logger;
 bool DeathTest::ranEcho(false);
@@ -63,6 +64,8 @@ TEST(DeathTest, VerifySingleton) {
 
 TEST(DeathTest, VerifyReceiveCheck) {
    RaiiDeathCleanup cleanup;
+   Death::ClearExits();
+
    Death::Instance().SetupExitHandler();
 
    EXPECT_FALSE(Death::Instance().WasKilled());
@@ -78,6 +81,32 @@ TEST(DeathTest, VerifyReceiveSignal) {
    raise(SIGSEGV);
    EXPECT_TRUE(Death::Instance().WasKilled());
 }
+
+namespace {
+   size_t gDeathCounter = 0;
+}
+
+TEST(DeathTest, VerifyRecursiveCrash) {
+   RaiiDeathCleanup cleanup;
+   Death::ClearExits();
+   Death::Instance().SetupExitHandler();
+   gDeathCounter = 0;
+   
+      auto deathCounter = [](const Death::DeathCallbackArg& arg) {
+      std::cout << "Death message: " << arg << std::endl;
+      ++gDeathCounter;
+      assert(gDeathCounter < 10); // just sanity check in case logic changes
+      CHECK(false);
+   };
+
+   Death::Instance().RegisterDeathEvent(deathCounter, "test");
+
+   EXPECT_FALSE(Death::Instance().WasKilled());
+   CHECK(false);
+   EXPECT_TRUE(Death::Instance().WasKilled());
+   EXPECT_EQ(gDeathCounter, 1);
+}
+
 
 TEST(DeathTest, ResetWorks) {
    RaiiDeathCleanup cleanup;
@@ -130,4 +159,25 @@ TEST(DeathTest, ThreadSafeTest) {
    EXPECT_EQ(1,DeathTest::stringsEchoed.size());
    EXPECT_EQ("race", DeathTest::stringsEchoed[0]);
 }
+
+
+// 
+TEST(DeathTest, DISABLED_VerifyReceiveSignalAndExitForReal) {
+   std::cout << "Running this test will kill the test process ... keep it disabled if possible" << std::endl;
+   std::cout << "If the test succeeds then another printout will come that says 'Death message: SUCCESS'" << std::endl;
+   RaiiDeathCleanup cleanup;
+   auto deathTestCallback = [](const Death::DeathCallbackArg& arg) {
+      std::cout << "Death message: " << arg << std::endl;
+      CHECK(false); // make it a recursive death for good measure
+   };
+
+   Death::EnableDefaultFatalCall();
+   std::string msg = {"SUCCESS"};
+   Death::RegisterDeathEvent(deathTestCallback, msg);
+
+   EXPECT_FALSE(Death::Instance().WasKilled());
+   raise(SIGSEGV);
+   EXPECT_TRUE(Death::Instance().WasKilled());
+}
+
 
