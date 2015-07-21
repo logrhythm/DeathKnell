@@ -9,8 +9,6 @@
 #include <g3log/logworker.hpp>
 #include <g3log/g3log.hpp>
 
-std::shared_ptr<g3::LogWorker> logger(nullptr);
-
 int main(int argc, char *argv[])
 {
 
