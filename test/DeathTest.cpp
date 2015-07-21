@@ -6,7 +6,6 @@
 #include <FileIO.h>
 #include <cassert>
 
-extern std::shared_ptr<g2LogWorker> g2logger;
 bool DeathTest::ranEcho(false);
 std::vector<Death::DeathCallbackArg> DeathTest::stringsEchoed;
 int DeathTest::ranTimes(0);
@@ -161,7 +160,7 @@ TEST(DeathTest, ThreadSafeTest) {
 }
 
 
-// 
+// --gtest_also_run_disabled_tests 
 TEST(DeathTest, DISABLED_VerifyReceiveSignalAndExitForReal) {
    std::cout << "Running this test will kill the test process ... keep it disabled if possible" << std::endl;
    std::cout << "If the test succeeds then another printout will come that says 'Death message: SUCCESS'" << std::endl;
