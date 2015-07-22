@@ -1,7 +1,8 @@
 Name:          DeathKnell
 Version:       1.0
 Release:       1%{?dist}
-Summary:       An implemnetation of a on death callback structure built from  g3lo g3lo g3log        Development/Tools
+Summary:       An implemnetation of a on death callback structure built from g3log
+Group:         Development/Tools
 License:       MIT
 BuildRequires: probecmake >= 2.8, gperftools >= 2.0, g3logrotate
 Requires: g3log
