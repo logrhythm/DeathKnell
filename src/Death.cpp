@@ -1,8 +1,10 @@
 
-#include <g2log.hpp>
+#include <g3log/g3log.hpp>
+#include <g3log/logmessage.hpp>
 #include <unistd.h>
 #include <iostream>
 #include "Death.h"
+
 
 /**
  * Singleton Instance Method
@@ -44,15 +46,15 @@ void Death::EnableDefaultFatalCall() {
 }
 /// @param death message with any captured death details
 
-void Death::Received(g2::internal::FatalMessage death) {
+void Death::Received(g3::FatalMessagePtr death) {
 
    thread_local bool recursiveDeathDetect = false;
 
    // lambda for quick exit
-   auto clearCallbacksThenFatalExit = [&](g2::internal::FatalMessage death) {
+   auto clearCallbacksThenFatalExit = [&](g3::FatalMessagePtr death) {
       if (Death::Instance().mEnableDefaultFatal) {
          ClearExits();
-         g2::internal::fatalCallToLogger(death);
+         g3::internal::pushFatalMessageToLogger(death);
       }
       recursiveDeathDetect = false; // reset for test purposes
    };
@@ -67,7 +69,8 @@ void Death::Received(g2::internal::FatalMessage death) {
 
    std::lock_guard<std::mutex> glock(Death::Instance().mListLock);
    Death::Instance().mReceived = true;
-   Death::Instance().mMessage = death.message_;
+   auto crashReason = death.get()->toString();
+   Death::Instance().mMessage = crashReason;
    recursiveDeathDetect = true;
    for (const auto& deathFunction : Death::Instance().mShutdownFunctions) {
       // semi-dangerous in case one function would trigger another FATAL
@@ -93,7 +96,7 @@ bool Death::WasKilled() {
 /// Please call this if you plan on doing DEATH tests. 
 
 void Death::SetupExitHandler() {
-   g2::internal::changeFatalInitHandler(Death::Received);
+   g3::setFatalExitHandler(Death::Received);
 }
 
 void Death::ClearExits() {
