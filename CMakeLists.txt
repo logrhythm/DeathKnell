@@ -73,8 +73,10 @@ file(GLOB SRC_FILES ${PROJECT_SRC}/*.h ${PROJECT_SRC}/*.hpp ${PROJECT_SRC}/*.cpp
  
 # Create the DeathKnell library
 include_directories(${PROJECT_SRC})
-add_library(DeathKnell ${SRC_FILES})
-set_target_properties(DeathKnell PROPERTIES LINKER_LANGUAGE CXX)
+add_library(DeathKnell SHARED  ${SRC_FILES})
+MESSAGE("\n\n\n\nVERSION ${VERSION}")
+SET(DeathKnell_VERSION_STRING ${VERSION})
+set_target_properties(DeathKnell PROPERTIES LINKER_LANGUAGE CXX SOVERSION ${VERSION})
 
 
 
