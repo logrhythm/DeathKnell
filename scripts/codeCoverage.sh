@@ -1,17 +1,17 @@
 #!/bin/bash
 LAUNCH_DIR=`pwd`
 COVERAGE_DIR=coverage
-SOURCE_BLACKLIST=".*ProbeTransmogrifier.cpp.*"
+#  uncoment to enabled source blacklist: exmple --> SOURCE_BLACKLIST=".*ProbeTransmogrifier.cpp.*"
 HEADER_WHITELIST=
 
 #clean up coverage dir
 rm -rf $COVERAGE_DIR
 mkdir -p $COVERAGE_DIR
 
-PROJECT="ProbeTransmogrifier"
-OBJECT_DIR="probe_transmogrifier_debug.dir"
+PROJECT="DeathKnell"
+OBJECT_DIR="DeathKnell.dir"
 #copy source cpp files and profile files to the coverage dir
-cp ~/rpmbuild/BUILD/$PROJECT/build/CMakeFiles/$OBJECT_DIR/src/* $COVERAGE_DIR
+cp ~/rpmbuild/BUILD/$PROJECT/CMakeFiles/$OBJECT_DIR/src/* $COVERAGE_DIR
 #convert the whitelist to a filter
 FORMATTED_HEADER_LIST=
 for header in $HEADER_WHITELIST 
@@ -30,5 +30,8 @@ else
 fi
 
 PATH=/usr/local/probe/bin:$PATH
-gcovr -v --filter="$FILTER" --exclude="$SOURCE_BLACKLIST" --gcov-executable /usr/local/probe/bin/gcov --exclude-unreachable-branches --html --html-details -o coverage.html
+# Uncomment/replace with the gcovr line at the bottom to enabled source blacklist
+#gcovr -v --filter="$FILTER" --exclude="$SOURCE_BLACKLIST" --gcov-executable /usr/local/probe/bin/gcov --exclude-unreachable-branches --html --html-details -o coverage.html
+
+gcovr -v --filter="$FILTER"  --gcov-executable /usr/local/probe/bin/gcov --exclude-unreachable-branches --html --html-details -o coverage.html
 cd $LAUNCH_DIR
