@@ -2,8 +2,16 @@
 LAUNCH_DIR=`pwd`
 
 COVERAGE_DIR=coverage
-#  uncoment to enabled source blacklist: exmple --> SOURCE_BLACKLIST=".*ProbeTransmogrifier.cpp.*"
+
+
+# If you need to add a header to the code coverage please put it here
+# example "myfile.h myotherfile.h"
 HEADER_WHITELIST=
+
+# black listing of files can also be done
+# please see commented out execution of gcovr at the bottom
+# example: 
+#  SOURCE_BLACKLIST=".*ProbeTransmogrifier.cpp.*"
 
 #clean up coverage dir
 rm -rf $COVERAGE_DIR
