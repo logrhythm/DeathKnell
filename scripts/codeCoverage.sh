@@ -1,5 +1,6 @@
 #!/bin/bash
 LAUNCH_DIR=`pwd`
+
 COVERAGE_DIR=coverage
 #  uncoment to enabled source blacklist: exmple --> SOURCE_BLACKLIST=".*ProbeTransmogrifier.cpp.*"
 HEADER_WHITELIST=
@@ -8,10 +9,31 @@ HEADER_WHITELIST=
 rm -rf $COVERAGE_DIR
 mkdir -p $COVERAGE_DIR
 
+cd 3rdparty
+unzip -u gtest-1.7.0.zip
+cd ..
+
+rm -rf build
+mkdir -p build
+cd build
+
+# just some dummy version to please cmake
+VERSION=1.1.1.1.1
+echo "Pseudo FileIO version: $VERSION"
+PATH=/usr/local/probe/bin:$PATH
+/usr/local/probe/bin/cmake -DUSE_LR_DEBUG=ON -DVERSION=$VERSION -DCMAKE_CXX_COMPILER_ARG1:STRING=' -Wall -Werror -g -gdwarf-2 -fprofile-arcs -ftest-coverage -O0 -fPIC -m64 -Wl,-rpath -Wl,. -Wl,-rpath -Wl,/usr/local/probe/lib -Wl,-rpath -Wl,/usr/local/probe/lib64 ' -DCMAKE_CXX_COMPILER=/usr/local/probe/bin/g++ ..
+
+
+make -j
+./UnitTestRunner 
+cd ..
+
+
+
 PROJECT="DeathKnell"
 OBJECT_DIR="DeathKnell.dir"
 #copy source cpp files and profile files to the coverage dir
-cp ~/rpmbuild/BUILD/$PROJECT/CMakeFiles/$OBJECT_DIR/src/* $COVERAGE_DIR
+cp build/CMakeFiles/$OBJECT_DIR/src/* $COVERAGE_DIR
 #convert the whitelist to a filter
 FORMATTED_HEADER_LIST=
 for header in $HEADER_WHITELIST 
