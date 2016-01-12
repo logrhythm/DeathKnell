@@ -8,7 +8,6 @@ if [[ $# -ne 1 ]] ; then
     exit 0
 fi
  
-VERSION="$1"
 if [ "$1" = "PRODUCTION" ] ; then
    BUILD_TYPE="-DUSE_DEBUG_COVERAGE=OFF"
 elif  [ "$1" = "COVERAGE" ] ; then
