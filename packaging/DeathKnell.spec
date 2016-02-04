@@ -4,7 +4,7 @@ Release:       1%{?dist}
 Summary:       An implemnetation of a on death callback structure built from g3log
 Group:         Development/Tools
 License:       MIT
-BuildRequires: probecmake >= 2.8, gperftools >= 2.0, g3logrotate
+BuildRequires: probecmake >= 2.8, gperftools >= 2.0, g3logrotate, FileIO
 Requires: g3log
 ExclusiveArch: x86_64
 
