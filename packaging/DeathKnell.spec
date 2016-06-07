@@ -35,7 +35,7 @@ if [ "%{buildtype}" == "-DUSE_LR_DEBUG=OFF" ]; then
 elif [ "%{buildtype}" == "-DUSE_LR_DEBUG=ON" ]; then
    /usr/local/probe/bin/cmake -DUSE_LR_DEBUG=ON -DVERSION=%{version} -DCMAKE_CXX_COMPILER_ARG1:STRING=' -std=c++14  -Wall -Werror -g -gdwarf-2 -O0 -fPIC -m64 -Wl,-rpath -Wl,. -Wl,-rpath -Wl,/usr/local/probe/lib -Wl,-rpath -Wl,/usr/local/probe/lib64 ' -DCMAKE_CXX_COMPILER=/usr/local/probe/bin/g++
 else
-   echo "Unknown buildtype:" %{buildtype}
+   echo "Unknown buildtype:" "%{buildtype}"
    exit 1
 fi
 
