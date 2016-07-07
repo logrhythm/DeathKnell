@@ -8,10 +8,11 @@
 
 bool DeathTest::ranEcho(false);
 std::vector<Death::DeathCallbackArg> DeathTest::stringsEchoed;
-int DeathTest::ranTimes(0);
+std::atomic<int> DeathTest::ranTimes(0);
+
 TEST(DeathTest, DeleteIpcFilesRemovesIPCFiles) {
    DeathTest::ranEcho = false;
-   DeathTest::ranTimes = 0;
+   DeathTest::ranTimes.store(0);
    DeathTest::stringsEchoed.clear();
    RaiiDeathCleanup cleanup;
    Death::Instance().SetupExitHandler();
@@ -26,7 +27,7 @@ TEST(DeathTest, DeleteIpcFilesRemovesIPCFiles) {
 
 TEST(DeathTest, DeleteIpcFilesDoesntRemoveNonIPCFiles) {
    DeathTest::ranEcho = false;
-   DeathTest::ranTimes = 0;
+   DeathTest::ranTimes.store(0);
    DeathTest::stringsEchoed.clear();
    RaiiDeathCleanup cleanup;
    Death::Instance().SetupExitHandler();
@@ -130,9 +131,11 @@ TEST(DeathTest, RegisterSomething) {
    EXPECT_EQ("test", DeathTest::stringsEchoed[0]);
 }
 
-TEST(DeathTest, ThreadSafeTest) {
+
+
+TEST(DeathTest, VerifyThreadDeathEventRegistration) {
    DeathTest::ranEcho = false;
-   DeathTest::ranTimes = 0;
+   DeathTest::ranTimes.store(0);
    DeathTest::stringsEchoed.clear();
    RaiiDeathCleanup cleanup;
    Death::Instance().SetupExitHandler();
@@ -144,7 +147,7 @@ TEST(DeathTest, ThreadSafeTest) {
       Death::Instance().RegisterDeathEvent(&DeathTest::RaceTest, "race");
    };
    std::vector<std::future<void>> waitingPromises;
-   for (int i = 0; i < 10000; i++) {
+   for (int i = 0; i < 10; i++) {
       waitingPromises.push_back(std::async(std::launch::async, ManyThreads));
    }
    for (auto& waitFor : waitingPromises) {
@@ -154,11 +157,58 @@ TEST(DeathTest, ThreadSafeTest) {
 
    EXPECT_TRUE(DeathTest::ranEcho);
    EXPECT_FALSE(DeathTest::stringsEchoed.empty());
-   EXPECT_EQ(10000, DeathTest::ranTimes);
+   EXPECT_EQ(10, DeathTest::ranTimes);
    EXPECT_EQ(1,DeathTest::stringsEchoed.size());
    EXPECT_EQ("race", DeathTest::stringsEchoed[0]);
 }
 
+TEST(DeathTest, VerifySimultaneousDeathAndDeathEventRegistration) {
+   DeathTest::ranEcho = false;
+   DeathTest::ranTimes.store(0);
+   DeathTest::stringsEchoed.clear();
+   RaiiDeathCleanup cleanup;
+   Death::Instance().SetupExitHandler();
+   const size_t kNumberOfThreads = 10;
+   EXPECT_FALSE(DeathTest::ranEcho);
+   EXPECT_TRUE(DeathTest::stringsEchoed.empty());
+   
+   std::atomic<bool> keepAlive{true};
+   std::atomic<size_t> runningCounter{0};
+   auto ManyThreadsDie = [&]() {
+      ++runningCounter;
+      Death::Instance().RegisterDeathEvent(&DeathTest::RaceTest, "race");
+      while(keepAlive) {
+         std::this_thread::sleep_for(std::chrono::nanoseconds(rand() % 16000));
+      }
+      CHECK(false);     
+   };
+
+   std::vector<std::future<void>> waitingPromises;
+   for (int i = 0; i < kNumberOfThreads; i++) {
+      waitingPromises.push_back(std::async(std::launch::async, ManyThreadsDie));
+   }
+
+   // wait for all threads to be running before triggering FATAL event
+   while(runningCounter < kNumberOfThreads) {
+      std::this_thread::sleep_for(std::chrono::nanoseconds(rand() % 16000));
+   } 
+   // trigger fatal exit in all threads
+   keepAlive.store(false);
+
+   // wait for all threads to finish
+   for (auto& waitFor : waitingPromises) {
+      waitFor.get();
+   }
+
+
+   EXPECT_TRUE(DeathTest::ranEcho);
+   EXPECT_FALSE(DeathTest::stringsEchoed.empty());
+   // 10 threads will trigger each a FATAL event that will each time
+   // trigger the death callback. I.e. 10 * 10 events
+   EXPECT_EQ(kNumberOfThreads * kNumberOfThreads, DeathTest::ranTimes);
+   EXPECT_EQ(1,DeathTest::stringsEchoed.size());
+   EXPECT_EQ("race", DeathTest::stringsEchoed[0]);
+}
 
 // --gtest_also_run_disabled_tests 
 TEST(DeathTest, DISABLED_VerifyReceiveSignalAndExitForReal) {
