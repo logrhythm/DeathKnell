@@ -2,7 +2,7 @@
 
 #include "gtest/gtest.h"
 #include <vector>
-
+#include <atomic>
 #include "Death.h"
 
 class DeathTest : public ::testing::Test {
@@ -15,7 +15,7 @@ public:
    static void EchoTheString(const Death::DeathCallbackArg& theString);
    static void RaceTest(const Death::DeathCallbackArg& theString);
    static bool ranEcho;
-   static int ranTimes;
+   static std::atomic<int> ranTimes;
    static std::vector<Death::DeathCallbackArg> stringsEchoed;
 protected:
 
