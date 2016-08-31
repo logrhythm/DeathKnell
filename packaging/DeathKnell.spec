@@ -1,6 +1,6 @@
 Name:          DeathKnell
 Version:       %{version}
-Release:       1%{?dist}
+Release:       %{buildnumber}%{?dist}
 Summary:       An implementation of an "on-death" callback structure built from g3log
 Group:         Development/Tools
 License:       MIT
