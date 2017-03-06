@@ -18,6 +18,6 @@ Ref: [[g3log `ksignals`]](https://github.com/KjellKod/g3log/blob/master/src/cras
 
 
 
-DeathKnell is an extension to the fatal handling provided by [[g3log]](https://github.com/KjellKod/g3log). The extension makes is significantly easier to also unit test fatal event handling. 
+DeathKnell is an extension to the fatal handling provided by [[g3log]](https://github.com/KjellKod/g3log). The extension makes is significantly easier to  unit test fatal event handling. 
 
 The API is available in the [[Death.h]](https://github.com/LogRhythm/DeathKnell/blob/master/src/Death.h) header file. API usage is best read in the [[unit tests]](https://github.com/LogRhythm/DeathKnell/blob/master/test/DeathTest.cpp). 
