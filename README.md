@@ -1,7 +1,20 @@
 DeathKnell
 ==========
 
-The `Death` functionality allows final callbacks when fatal signal errors  or `g3log` fatal events are received. Examples of fatal signal errors are: `SIGSEGV`, `SIGABRT`, `SIGFPE`, `SIGILL` and `SIGTERM`. Examples of g3log fatal events are `LOG(FATAL)` and `CHECK(<expression == false>)`  
+The `Death` functionality allows final callbacks when fatal signal errors  or `g3log` fatal events are received. 
+
+Examples of fatal signal errors are: 
+`SIGSEGV`
+`SIGABRT`
+`SIGFPE`
+`SIGILL`
+`SIGTERM`
+Ref: [[g3log `ksignals`]](https://github.com/KjellKod/g3log/blob/master/src/crashhandler_unix.cpp)
+
+
+Examples of g3log fatal events are 
+`LOG(FATAL) --> FATAL logging event`
+`CHECK(<expression == false>) --> FATAL contract event`  
 
 DeathKnell is an extention to the fatal handling provided by`g3log`. The extension makes is significantly easier to also unit test fatal event handling. 
 
