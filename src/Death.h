@@ -11,7 +11,7 @@
  *  but will instead of exiting the test/application call @ref Death::Received
  *
  * The reason for using this instead of Google's gtest DEATH framework is that the DEATH framework
- *  will do popen/fork which clashes with our use of the MotherForker.
+ *  will do popen/fork which clashes with internal usage of process forking.
  */
 class Death {
 public:
