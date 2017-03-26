@@ -35,9 +35,6 @@ list(APPEND LIBS ${BOOST_THREAD})
 find_library(BOOST_SYSTEM boost_thread PATHS /usr/local/probe/lib )
 list(APPEND LIBS ${BOOST_SYSTEM})
 
-find_library(TCMALLOC tcmalloc PATHS /usr/local/probe/lib )
-list(APPEND LIBS ${TCMALLOC})
-
 
 IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
    MESSAGE("")
@@ -56,6 +53,15 @@ FILE(GLOB SRC_FILES ${PROJECT_SRC}/*.h ${PROJECT_SRC}/*.hpp ${PROJECT_SRC}/*.cpp
 # Name for the library
 SET(LIBRARY_TO_BUILD DeathKnell)
 
+SET(MAJOR_VERSION 1)
+IF (NOT DEFINED ${VERSION})
+   MESSAGE("Extracting git software version")
+   execute_process(COMMAND bash "-c" "git rev-list --branches HEAD | wc -l | tr -d ' ' | tr -d '\n'" OUTPUT_VARIABLE GIT_VERSION)
+   SET(MINOR_VERSION ${GIT_VERSION})
+   SET(BUILD_NUMBER 0)
+   SET(VERSION ${MAJOR_VERSION}.${MINOR_VERSION}.${BUILD_NUMBER}) 
+ENDIF()
+MESSAGE("Software Version: ${VERSION}")
 
 
 # Create the DeathKnell library
@@ -86,3 +92,14 @@ SET(CMAKE_CXX_FLAGS "-Wall -Wno-sign-compare -rdynamic -Wunused -std=c++14 -pthr
 add_executable(UnitTestRunner 3rdparty/test_main.cpp ${TEST_SRC_FILES} )
 target_link_libraries(UnitTestRunner ${LIBRARY_TO_BUILD} gtest_170_lib ${LIBS})
 set_target_properties(${test} PROPERTIES COMPILE_FLAGS "-isystem -pthread ")
+
+
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+   FILE(GLOB HEADER_FILES ${PROJECT_SRC}/*.h)
+   # ==========================================================================
+   #   Package handling is done AFTER all other CMake setup
+   #   usage:   make package
+   #   Check the output result and install accordingly.
+   # ==========================================================================
+   INCLUDE (${PROJECT_SRC}/../CPackLists.txt)
+ENDIF()
