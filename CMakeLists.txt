@@ -29,12 +29,6 @@ list(APPEND LIBS ${G3FILE_ROTATE})
 find_library(FILEIO FileIO PATHS /usr/local/probe/lib)
 list(APPEND LIBS ${FILEIO})
 
-find_library(BOOST_THREAD boost_thread PATHS /usr/local/probe/lib )
-list(APPEND LIBS ${BOOST_THREAD})
-
-find_library(BOOST_SYSTEM boost_thread PATHS /usr/local/probe/lib )
-list(APPEND LIBS ${BOOST_SYSTEM})
-
 
 IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
    MESSAGE("")
