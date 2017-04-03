@@ -1,0 +1,77 @@
+#  INSTALL( TARGETS DeathKnell
+ #           ARCHIVE
+ #           LIBRARY DESTINATION lib/DeathKnell
+ #           COMPONENT libraries)
+
+ #  INSTALL( FILES ${HEADER_FILES}
+ #           DESTINATION include
+ #           COMPONENT headers)
+
+
+IF (NOT DEFINED ${CPACK_INSTALL_PREFIX})
+   SET(CPACK_INSTALL_PREFIX "/usr/local")
+ENDIF()
+
+SET(CPACK_PACKAGE_NAME DeathKnell)
+SET(CPACK_PACKAGE_VERSION_MAJOR ${MAJOR_VERSION})
+SET(CPACK_PACKAGE_VERSION_MINOR ${MINOR_VERSION})
+SET(CPACK_PACKAGE_VERSION_PATCH ${BUILD_NUMBER})
+SET(CPACK_PACKAGE_DESCRIPTION "DeathKnell is an extension to the fatal handling mechanism provided by g3log.
+    The DeathKnell extension makes it easier to  add multiple custom callbacks to be triggered in case of a fatal shutdown. 
+    DeathKnell facilitates unit testing of fatal events. 
+    MIT License. Copyright (c) 2014 LogRhythm. 
+    Repository: https://github.com/LogRhythm/DeathKnell")
+
+
+
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${CPACK_PACKAGE_DESCRIPTION})
+SET(CPACK_PACKAGE_CONTACT "LogRhythm kjell.hedstrom@logrhythm.com")
+SET(CPACK_RESOURCE_FILE_LICENSE ${PROJECT_SRC}/../LICENSE)
+SET(CPACK_PACKAGE_VENDOR "LogRhythm")
+SET(CPACK_RESOURCE_FILE_LICENSE ${PROJECT_SRC}/../LICENSE)
+
+
+SET(CMAKE_INSTALL_LIBDIR lib CACHE PATH "Output dir for libraries")
+SET(CMAKE_INSTALL_HEADERDIR include CACHE PATH "Output dir for headers")
+
+INSTALL( TARGETS DeathKnell 
+        ARCHIVE DESTINATION ${CPACK_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CPACK_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}
+        COMPONENT libraries)
+
+INSTALL( FILES ${HEADER_FILES}
+          DESTINATION ${CPACK_INSTALL_PREFIX}/${CMAKE_INSTALL_HEADERDIR}
+          COMPONENT headers)
+
+
+SET(CPACK_COMPONENTS_ALL libraries headers)
+SET(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "DeathKnell libraries")
+SET(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "DeathKnell C++ headers")
+
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+   SET(CPACK_GENERATOR "DEB")
+   SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "LogRhythm")
+   MESSAGE("\nTo create installation package: ")
+   MESSAGE("make package")
+ENDIF()
+
+
+MESSAGE("\nOption to install using 'sudo make install")
+MESSAGE("Installation locations: ")
+MESSAGE("====================")
+MESSAGE("[${CMAKE_INSTALL_HEADERDIR} ]Headers: ${CPACK_INSTALL_PREFIX}/${CMAKE_INSTALL_HEADERDIR}")
+MESSAGE("Library : ${CPACK_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+
+MESSAGE("For more information please see DeathKnell/CPackLists.txt")
+MESSAGE("To install: sudo dpkg -i DeathKnell-<version>-Linux.deb")
+MESSAGE("To list files in install package: sudo dpkg --contents DeathKnell-<version>-Linux.deb")
+MESSAGE("To list installed files: sudo dpkg -L DeathKnell")
+MESSAGE("To remove: sudo dpkg -r DeathKnell")
+MESSAGE("To remove: sudo dpkg -r DeathKnell")
+
+#  NOTE: to change installation locations you can use the settings below
+#  examples:
+#  CPACK_INSTALL_PREFIX
+#  CMAKE_INSTALL_HEADERDIR
+#  CMAKE_INSTALL_LIBDIR
+INCLUDE(CPack)
