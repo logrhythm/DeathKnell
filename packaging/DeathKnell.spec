@@ -5,7 +5,7 @@ Summary:       An implementation of an "on-death" callback structure built from 
 Group:         Development/Tools
 License:       MIT
 BuildRequires: probecmake >= 2.8, gperftools >= 2.0, g3logrotate, FileIO
-Requires: g3log
+Requires:      g3log, dpiUser
 ExclusiveArch: x86_64
 
 %description
