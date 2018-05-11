@@ -4,6 +4,7 @@ Release:       %{buildnumber}%{?dist}
 Summary:       An implementation of an "on-death" callback structure built from g3log
 Group:         Development/Tools
 License:       MIT
+URL:           https://github.com/logrhythm/deathknell
 BuildRequires: probecmake >= 2.8, gperftools >= 2.0, g3logrotate, FileIO
 Requires:      g3log, dpiUser
 ExclusiveArch: x86_64
@@ -21,7 +22,7 @@ if [ $? -ne 0 ]; then
 fi
 
 %build
-# SKIP_BUILD_RPATH, CMAKE_SKIP_BUILD_RPATH, 
+# SKIP_BUILD_RPATH, CMAKE_SKIP_BUILD_RPATH,
 cd %{name}/
 PATH=/usr/local/gcc/bin:/usr/local/probe/bin:$PATH
 rm -f  CMakeCache.txt
