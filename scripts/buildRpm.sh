@@ -3,21 +3,21 @@ set -e
 PACKAGE=DeathKnell
 
 if [[ $# -ne 2  ]] ; then
-   echo 'Usage:  sh buildRpm <BUILD_TYPE> <BUILDNUMBER>'
+   echo 'Usage:  sh buildRpm <BUILD_NUMBER> <BUILD_TYPE>'
    echo '        BUILD_TYPE is PRODUCTION or DEBUG'
    exit 0
 fi
 
-if [ "$1" = "PRODUCTION"  ] ; then
+if [ "$2" = "PRODUCTION"  ] ; then
    BUILD_TYPE="-DUSE_LR_DEBUG=OFF"
-elif  [ "$1" = "DEBUG"  ] ; then
+elif  [ "$2" = "DEBUG"  ] ; then
    BUILD_TYPE="-DUSE_LR_DEBUG=ON"
 else
    echo "<BUILD_TYPE> must be one of: PRODUCTION or DEBUG"
    exit 0
 fi
 
-BUILD="$2"
+BUILD="$1"
 
 # As version number we use the commit number on HEAD 
 # we do not bother with other branches for now
@@ -31,7 +31,6 @@ CWD=$PWD/$PACKAGE
 DISTDIR=$CWD/dist/$PACKAGE
 PATH=$PATH:/usr/local/probe/bin:$PATH
 
-rm -rf ~/rpmbuild
 rpmdev-setuptree
 cp packaging/$PACKAGE.spec ~/rpmbuild/SPECS
 rm -f $PACKAGE-$VERSION.tar.gz
