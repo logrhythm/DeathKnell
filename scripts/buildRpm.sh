@@ -26,11 +26,6 @@ VERSION="1.$GIT_VERSION"
 
 echo "Building $PACKAGE --> version: $VERSION"
 
-PWD=`pwd`
-CWD=$PWD/$PACKAGE
-DISTDIR=$CWD/dist/$PACKAGE
-PATH=$PATH:/usr/local/probe/bin:$PATH
-
 sudo rm -rf ~/rpmbuild
 rpmdev-setuptree
 cp packaging/$PACKAGE.spec ~/rpmbuild/SPECS
